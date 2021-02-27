@@ -7,7 +7,7 @@ Script pour lancer la blockchian et avoir acces a la console
 geth --networkid 2020 \
     --datadir . --password password \
     --rpc --rpcapi='db,eth,net,web3,personal' \
-    --rpcport '9545' --rpcaddr '127.0.0.1' --rpccorsdomain '*' 
+    --rpcport '9545' --rpcaddr '127.0.0.1' --rpccorsdomain '*' \ 
     --allow-insecure-unlock \
     console
 
