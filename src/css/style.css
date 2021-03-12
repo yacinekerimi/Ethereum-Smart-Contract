@@ -1,0 +1,215 @@
+body {
+  background-size: cover;
+}
+
+div.row {
+  margin-bottom: 30px;
+}
+
+a, a:hover, a:active, a:visited, a:focus {
+  color: #e91e63;
+  text-decoration: none;
+}
+
+.modal-body {
+    word-break: break-all;
+}
+
+#wallet-image {
+  width: 200px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+#actions button {
+  margin-bottom: 5px;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.material-icons {
+  color: #474f58;
+  vertical-align: middle;
+}
+
+.btn-link {
+  text-decoration: none;
+  color: #e91e63;
+}
+
+.btn-link, .btn-link:hover, .btn-link:active, .btn-link:visited, .btn-link:focus {
+  color: #e91e63;
+  text-decoration: none;
+}
+
+.btn-link:disabled {
+  color: #333333;
+}
+
+#written-contract-actions {
+  margin-bottom: .75rem;
+}
+
+#contract-actions {
+  margin-top: 20px;
+}
+
+.card-header i:hover, table td i:hover {
+  color: #e91e63;
+  cursor: pointer;
+}
+
+table th, table td {
+  text-align: center !important;
+}
+
+table {
+  margin-bottom: 0px !important;
+}
+
+.hidden {
+  display: none;
+}
+span.time-ago {
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+footer {
+  color: white;
+  margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  #wallet-image {
+    margin-top: 30px;
+  }
+
+  
+
+  h1 {
+    text-align: center !important;
+  }
+
+  footer {
+    text-align: center !important;
+  }
+  body {
+    background: url('../images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+  
+  div.row {
+    margin-bottom: 30px;
+  }
+  
+  a, a:hover, a:active, a:visited, a:focus {
+    color: #e91e63;
+    text-decoration: none;
+  }
+  
+  .modal-body {
+      word-break: break-all;
+  }
+  
+  #wallet-image {
+    width: 200px;
+    height: auto;
+    margin-bottom: 30px;
+  }
+  
+  #actions button {
+    margin-bottom: 5px;
+  }
+  
+  .full-height {
+    height: 100%;
+  }
+  
+  .material-icons {
+    color: #474f58;
+    vertical-align: middle;
+  }
+  
+  .btn-link {
+    text-decoration: none;
+    color: #e91e63;
+  }
+  
+  .btn-link, .btn-link:hover, .btn-link:active, .btn-link:visited, .btn-link:focus {
+    color: #e91e63;
+    text-decoration: none;
+  }
+  
+  .btn-link:disabled {
+    color: #333333;
+  }
+  
+  #written-contract-actions {
+    margin-bottom: .75rem;
+  }
+  
+  #contract-actions {
+    margin-top: 20px;
+  }
+  
+  .card-header i:hover, table td i:hover {
+    color: #e91e63;
+    cursor: pointer;
+  }
+  
+  table th, table td {
+    text-align: center !important;
+  }
+  
+  table {
+    margin-bottom: 0px !important;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  nav {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  nav img {
+    width: 200px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .navbar-text {
+    color: white;
+  }
+  
+  span.time-ago {
+    font-size: 0.9em;
+    font-style: italic;
+  }
+  
+  footer {
+    color: white;
+    margin-bottom: 30px;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    #wallet-image {
+      margin-top: 30px;
+    }
+  
+    
+  
+    h1 {
+      text-align: center !important;
+    }
+  
+    footer {
+      text-align: center !important;
+    }
+  }
+}

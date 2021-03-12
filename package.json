@@ -1,0 +1,22 @@
+{
+  "name": "projet-ethereum",
+  "version": "1.0.0",
+  "description": "Déploiement d'un Smart Contrat de marriage",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yacine KERIMI",
+  "license": "MIT",
+  "devDependencies": {
+    "lite-server": "latest"
+  },
+  "dependencies": {
+    "@truffle/hdwallet-provider": "latest",
+    "ethereumjs-abi": "latest"
+  }
+}
