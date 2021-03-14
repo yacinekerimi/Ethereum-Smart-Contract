@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.6.0;
 
 //
 
@@ -10,7 +10,7 @@ contract Contrat {
   event FundsSent(uint timestamp, address wallet, uint amount);
   event FundsReceived(uint timestamp, address wallet, uint amount);
 
-  uint256 public dateDep = now ;
+  uint256 public dateDep = block.timestamp ;
   uint256 public dateSig = 0 ;
   bool public signed = false;
   bool public divorced = false;
@@ -23,13 +23,13 @@ contract Contrat {
 
   // Helper
   modifier onlySpouse() {
-    require(msg.sender == husbandAddress || msg.sender == wifeAddress, "Sender is not a spouse!");
+    require(msg.sender == husbandAddress || msg.sender == wifeAddress, "");
     _;
   }
 
    // Modifier pour la multi-signature
   modifier isSigned() {
-    require(signed == true, "Contract has not been signed by both spouses yet!");
+    require(signed == true, "");
     _;
   }
 
@@ -55,23 +55,29 @@ contract Contrat {
   }
 
   // Payable
-  function() external payable isSigned isNotDivorced {
-    emit FundsReceived(now, msg.sender, msg.value);
+  function() isSigned isNotDivorced external payable{
+    emit FundsReceived(block.timestamp, msg.sender, msg.value);
   }
+
+
+/* function() external payable isSigned isNotDivorced {
+    emit FundsReceived(now, msg.sender, msg.value);
+  } */
+
 
   // Signature
   function signContract() external onlySpouse {
-    require(hasSigned[msg.sender] == false, "Contrat déja signé");
+    require(hasSigned[msg.sender] == false, "Contrat deja signe");
     // Sender signed
     hasSigned[msg.sender] = true;
 
-    emit Signed(now, msg.sender);
+    emit Signed(block.timestamp, msg.sender);
 
     // Verification signature
     if (hasSigned[husbandAddress] && hasSigned[wifeAddress]) {
       signed = true;
-      dateSig = now;
-      emit ContractSigned(now);
+      dateSig = block.timestamp;
+      emit ContractSigned(block.timestamp);
     }
   }
 
@@ -81,22 +87,22 @@ contract Contrat {
     require(_amount <= address(this).balance, "Solde insuffisant!");
 
     _to.transfer(_amount);
-    emit FundsSent(now, _to, _amount);
+    emit FundsSent(block.timestamp, _to, _amount);
   }
 
 
   // Demande divorce, nécessite multi-sig
   function divorce() external onlySpouse isSigned isNotDivorced {
-    require(hasDivorced[msg.sender] == false, "Sender has already approved to divorce!");
+    require(hasDivorced[msg.sender] == false, "");
 
     hasDivorced[msg.sender] = true;
 
-    emit DivorceApproved(now, msg.sender);
+    emit DivorceApproved(block.timestamp, msg.sender);
 
     // Verification divorce
     if (hasDivorced[husbandAddress] && hasDivorced[wifeAddress]) {
       divorced = true;
-      emit Divorced(now);
+      emit Divorced(block.timestamp);
 
       // Solde contrat
       uint balance = address(this).balance;
