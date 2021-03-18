@@ -1,6 +1,6 @@
 App = {
-  husbandAddress: "0x6f768E4a54E69Ba8c95B9bc457e27e37359B4F85",
-  wifeAddress: "0x9446ac5D12235fB3C7E77B78A1031712ed6DA736",
+  husbandAddress: "0xad3747FC1bFb60a8BFb1772Cb5c7126B9F8a58A6",
+  wifeAddress: "0xC95b19543c59fe8200Cc2D5cC0887933898943BF",
 
 
 
@@ -8,6 +8,7 @@ App = {
   contracts: {},
   userAccount: undefined,
   events: [],
+  
 
   init: () => {
     return App.initWeb3();
@@ -26,18 +27,10 @@ App = {
       App.web3Provider = web3.currentProvider;
     }
     web3 = new Web3(App.web3Provider);
-
-
-    //var bzz = new Bzz(Bzz.web3Provider)
     App.userAccount = await web3.eth.accounts[0];
-    //web3.eth.getAccounts((err, accounts) => { console.log(err, accounts); });
-    // const AllAccounts = await web3.eth.getAccounts();
-    // console.log(web3.eth.accounts[1])
-   
-    
+
     if (App.userAccount === undefined && ethereum !== undefined) {
       await ethereum.enable();
-      
     }
 
     // Changement wallets
@@ -45,7 +38,6 @@ App = {
       const wallet = await web3.eth.accounts[0];
       if (wallet !== App.userAccount) {
         App.userAccount = wallet;
-        //console.log("Active wallet: " + App.userAccount);
         if (App.updateUi !== undefined) App.updateUi();
       }
     }, 100);
@@ -60,11 +52,21 @@ App = {
 
       // truffle-contract
       App.contracts.Contract = TruffleContract(Contrat);
+      // Ajouter premier contrat
       App.contracts.Contract.setProvider(App.web3Provider);
 
       App.initListeners();
-    });
-  },
+    })
+    , 
+    $.getJSON('./Precontrat.json', (data2) => {
+
+      Precontrat = data2;
+      App.contracts.Precontract = TruffleContract(Precontrat);
+      App.contracts.Precontract.setProvider(App.web3Provider);
+      App.initListeners();
+
+    
+  })},
 
   initListeners: () => {
     return App.initPolling();
@@ -93,12 +95,22 @@ App = {
       });
       
       // Mise a jour informations network
-      //const networkId =await web3.eth.net.getId();
-      //console.log(networkId)
-      
-    
+      $.get('config.json', function(data) {
+        configjson = JSON.parse(data, 'utf8'); 
+        $("#precontract-husbandAddress").val(configjson.husbandAddress);
+        $("#precontract-wifeAddress").val(configjson.wifeAddress);
+        $("#precontract-typeDivorce").prop('checked', configjson.divUnilateral);
+        $("#precontract-mtSingature").prop('checked', configjson.mtSingature);
+      }, 'text')
+  
+        contract.dateDep().then((dateDep) => {
+          if(dateDep == 0){
+            $("#etatContrat").text('Precontrat pas encore deployé');
+          }else{
+            $("#etatContrat").text("Date deploiement : " + new Date(dateDep*1000));
+          }
+        });
      
-    
       // Mise a jour adresses et contrat
       web3.eth.getBalance(App.userAccount, (error, balanceWei) => {
         const balance = web3.fromWei(web3.toDecimal(balanceWei));
@@ -165,7 +177,6 @@ App = {
         $("#date-sig").text(dateSig);
         return dateSig;
       });
-
       const fromBlockNumber = 0;
       contract.allEvents({ fromBlock: fromBlockNumber, toBlock: "latest" }).get((error, result) => {
         const newEvents = [];
@@ -198,6 +209,9 @@ App = {
               case "Divorced":
               eventListItem = updateEventListItem(eventListItem, "danger", timestamp, "Les deux mari ont accepté de divorcer! (dommage)");
               break;
+              case "DivorcedUni":
+              eventListItem = updateEventListItem(eventListItem, "danger", timestamp, "Divorce Unilateral");
+              break;
               case "FundsSent":
               eventListItem = updateEventListItem(eventListItem, "danger", timestamp, value + " ETH ajoute " + TypeAdresse(address, true) + " envoyé!");
               break;
@@ -213,10 +227,32 @@ App = {
   }
 };
 
-// Interface Smart contract 
 function signContract() {
+  let valMtSingature = false;
+
+  App.contracts.Precontract.deployed().then((Precontrat) => {
+    Precontrat.valMtSingature().then((valMtSingature) => {
+      valMtSingature = valMtSingature; 
+      console.log("send money while signing: " + valMtSingature);
+  if(valMtSingature){
+    $.get('config.json', function(data) {
+      configjson = JSON.parse(data, 'utf8'); 
+    }, 'text')
+    App.contracts.Contract.deployed().then((contract) => {
+      console.log("Transfer -> " + 5 + " ETH");
+      // a revoir gas
+      return web3.eth.sendTransaction({ from: App.userAccount, to: contract.address, value: web3.toWei(configjson.valMtSingature), gas: "50000" }, (error, hash) => {
+        //console.log(hash);
+        if (error) {
+          console.log(error);
+          ErrorModal(error, "Depöt echoué");
+        }
+      });
+    });}
+    });
+  });
+
   App.contracts.Contract.deployed().then((contract) => {
-    //console.log("Action: Sign Contract");
     return contract.signContract({ from: App.userAccount });
   }).then((result) => {
     //console.log(result);
@@ -226,7 +262,8 @@ function signContract() {
     $('#signContractModal').modal('hide');
     ErrorModal(error, "Signature echouée");
   });
-}
+      }
+
 
 function payIn() {
   const amount = $("#payInModal-amount").val();
@@ -250,7 +287,7 @@ function pay() {
   const address = $("#payModal-address").val();
   const amount = $("#payModal-amount").val();
   App.contracts.Contract.deployed().then((contract) => {
-    console.log("Action: Pay -> " + address + ", " + amount + " ETH");
+    console.log("Action: Payer -> " + address + ", " + amount + " ETH");
     return contract.pay(address, web3.toWei(amount), { from: App.userAccount });
   }).then((result) => {
     console.log(result);
@@ -265,20 +302,44 @@ function pay() {
     ErrorModal(error, "Paiement echoué");
   });
 }
+
 // Divorce
 function divorce() {
-  App.contracts.Contract.deployed().then((contract) => {
-    return contract.divorce({ from: App.userAccount });
-  }).then((result) => {
-    console.log(result);
-    $('#divorceModal').modal('hide');
-  }).catch((error) => {
-    console.log(error);
-    $('#divorceModal').modal('hide');
-    ErrorModal(error, "Divorce echoué");
-  });
-}
 
+  let Unilateral = false;
+  if (App.contracts.Precontract === undefined) return;
+  
+  App.contracts.Precontract.deployed().then((Precontrat) => {
+    Precontrat.divUnilateral().then((divUnilateral) => {
+      Unilateral = divUnilateral; 
+      console.log("Divorce Unilateral : " + divUnilateral);
+      if(Unilateral){
+        console.log("---> Divorce Unilateral");
+        App.contracts.Contract.deployed().then((contract) => {
+          return contract.UnilateralDivorce({ from: App.userAccount });
+        })
+
+      }else{
+        console.log("---> Divorce (necessite signature deux epoux");
+        App.contracts.Contract.deployed().then((contract) => {
+         return contract.divorce({ from: App.userAccount });
+        }).then((result) => {
+         console.log(result);
+          $('#divorceModal').modal('hide');
+        }).catch((error) => {
+        console.log(error);
+        $('#divorceModal').modal('hide');
+        ErrorModal(error, "Divorce echoué");
+      });
+    }}
+    )}
+)}
+      
+
+
+
+  
+  
 // Main
 $(document).ready(() => {
   App.init();
@@ -287,9 +348,7 @@ $(document).ready(() => {
 
 // Helpers
 function ErrorModal(error, message) {
-  // Verification confirmation Tx
   if (!_.isUndefined(error.message) && error.message.includes("Tx annulé")) return;
-
   $('#errorModalMessage').text(message);
   $('#errorModal').modal('show');
 }
@@ -312,3 +371,4 @@ function TypeAdresse(address, useAddressIfUnknown) {
   }
   return name;
 }
+

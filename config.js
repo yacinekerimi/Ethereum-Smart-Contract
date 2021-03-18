@@ -1,4 +1,0 @@
-module.exports = {
-  husbandAddress: "0x6f768E4a54E69Ba8c95B9bc457e27e37359B4F85",
-  wifeAddress: "0x9446ac5D12235fB3C7E77B78A1031712ed6DA736"
-}

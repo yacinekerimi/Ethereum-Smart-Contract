@@ -1,7 +1,8 @@
 {
   "server": {
-    "baseDir": ["./src", "./build/contracts"],
-    "open": false
+    "files": ["./src/**/*.{html,htm,css,js}"],
+    "baseDir": ["./src", "./build/contracts", "./", "app"],
+    "open": true
   },
   "ghostMode": false
 }

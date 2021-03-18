@@ -1,4 +1,4 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.4.24;
 
 //
 
@@ -7,12 +7,15 @@ contract Contrat {
   event ContractSigned(uint timestamp);
   event DivorceApproved(uint timestamp, address wallet);
   event Divorced(uint timestamp);
+  event DivorcedUni(uint timestamp);
   event FundsSent(uint timestamp, address wallet, uint amount);
   event FundsReceived(uint timestamp, address wallet, uint amount);
 
   uint256 public dateDep = block.timestamp ;
   uint256 public dateSig = 0 ;
   bool public signed = false;
+  bool public signedByHusband = false;
+  bool public signedByWife = false;
   bool public divorced = false;
 
   mapping (address => bool) private hasSigned;
@@ -29,7 +32,10 @@ contract Contrat {
 
    // Modifier pour la multi-signature
   modifier isSigned() {
-    require(signed == true, "");
+    require(signedByHusband == true || signedByWife == true, "");
+    if (signedByHusband && signedByWife){
+      signed = true;
+    } 
     _;
   }
 
@@ -74,9 +80,15 @@ contract Contrat {
     emit Signed(block.timestamp, msg.sender);
 
     // Verification signature
-    if (hasSigned[husbandAddress] && hasSigned[wifeAddress]) {
-      signed = true;
+    if (hasSigned[husbandAddress]) {
+      signedByWife = true;
       dateSig = block.timestamp;
+    }
+    if (hasSigned[wifeAddress]) {
+      signedByWife = true;
+      dateSig = block.timestamp;
+    }
+    if (hasSigned[wifeAddress] && hasSigned[husbandAddress]){
       emit ContractSigned(block.timestamp);
     }
   }
@@ -101,7 +113,10 @@ contract Contrat {
 
     // Verification divorce
     if (hasDivorced[husbandAddress] && hasDivorced[wifeAddress]) {
+   
+   
       divorced = true;
+   
       emit Divorced(block.timestamp);
 
       // Solde contrat
@@ -117,5 +132,29 @@ contract Contrat {
         emit FundsSent(now, wifeAddress, balancePerSpouse);
       }
     }
+  }
+
+  function UnilateralDivorce() external onlySpouse isSigned isNotDivorced {
+    require(hasDivorced[msg.sender] == false, "");
+
+    hasDivorced[msg.sender] = true;
+
+    emit DivorceApproved(block.timestamp, msg.sender);
+    // Verification divorce   
+    divorced = true;
+
+    // Event
+    emit DivorcedUni(block.timestamp);
+      // A changer selon modalité
+      uint balance = address(this).balance;
+      // Solde/2 en cas de divorce
+      if (balance != 0) {
+        uint balancePerSpouse = balance / 2;
+
+        husbandAddress.transfer(balancePerSpouse);
+        emit FundsSent(now, husbandAddress, balancePerSpouse);
+        wifeAddress.transfer(balancePerSpouse);
+        emit FundsSent(now, wifeAddress, balancePerSpouse);
+      }
   }
 }
