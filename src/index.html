@@ -25,41 +25,42 @@
                 <br><h1>Contrat Notaire</h1>
                 <hr> 
                 <form>
-                  <h5 class="card-title">Etat contrat</h5>
+                  <h5 class="card-title">Date deploiement</h5>
                   <p id="etatContrat" class="card-text">???</p>
-                <h5 class="card-title">Couple</h5>
+                <h5 class="card-title">Wallets associés</h5>
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
                     <span class="input-group-text">🤵</span>
                   </div>
-                  <input id="precontract-husbandAddress" type="text" class="form-control" placeholder="???" aria-label="Husband Address" aria-describedby="basic-addon2">
+                  <input id="precontract-husbandAddress" type="text" class="form-control" placeholder="???" aria-label="Husband Address" aria-describedby="basic-addon2" readonly>
                 </div>
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
                     <span class="input-group-text">👰</span>
                   </div>
-                  <input id="precontract-wifeAddress" type="text" class="form-control" placeholder="???" aria-label="Wife Address" aria-describedby="basic-addon2">
-                </div> </div>
+                  <input id="precontract-wifeAddress" type="text" class="form-control" placeholder="???" aria-label="Wife Address" aria-describedby="basic-addon2" readonly>
+                </div>
+                <h5 class="card-title">Modalités du contrat</h5>
                 <div class="form-check">
-                  <input id="precontract-typeDivorce" class="form-check-input" type="checkbox" value="" >
-                  <label class="form-check-label" for="defaultCheck1">
-                   Unilateral
-                  </label>
+                  <input id="precontract-typeDivorce" class="form-check-input" type="checkbox" value="" disabled>
+                  <label class="form-check-label" for="precontract-typeDivorce">
+                   Divorce unilateral</label>
                 </div>
                 <div class="form-check">
-                  <input id="precontract-mtSingature" class="form-check-input" type="checkbox" value="">
-                  <label class="form-check-label" for="contract-signed">Transaction signature</label>
+                  <input id="precontract-mtSingature" class="form-check-input" type="checkbox" value="" disabled>
+                  <label class="form-check-label" for="precontract-mtSingature"> Transaction signature</label>
                 </div>         
         </div>
+        </div>
       </form>
-
       <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <br><h1>Informations sur le contrat</h1>
+                <br><h1>Contrat marriage</h1>
                 <hr>
-               </div>
-        </div>
+                </div>
+      </div>
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-sm- align-self-start">
@@ -79,7 +80,7 @@
                   <i class="material-icons">payment</i><button type="button" class="signed-action-button btn btn-link" data-toggle="modal" data-target="#payModal" disabled>Payer</button>
                 </span>
               </p>
-              <h5 class="card-title">Couple</h5>
+              <h5 class="card-title">Wallets associés</h5>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text">🤵</span>
@@ -108,7 +109,6 @@
             </div>
           </div>
         </div>
-
           <div class="text-center">
           <div class="card">
             <div class="card-header">Wallet</div>
@@ -210,8 +210,6 @@
 
       </div>
     </div>
-
-
     <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

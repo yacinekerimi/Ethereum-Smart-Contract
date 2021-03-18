@@ -3,7 +3,7 @@ body {
 }
 
 div.row {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 a, a:hover, a:active, a:visited, a:focus {
@@ -15,11 +15,6 @@ a, a:hover, a:active, a:visited, a:focus {
     word-break: break-all;
 }
 
-#wallet-image {
-  width: 200px;
-  height: auto;
-  margin-bottom: 30px;
-}
 
 #actions button {
   margin-bottom: 5px;
@@ -83,9 +78,6 @@ footer {
 }
 
 @media only screen and (max-width: 600px) {
-  #wallet-image {
-    margin-top: 30px;
-  }
 
   
 
@@ -96,15 +88,9 @@ footer {
   footer {
     text-align: center !important;
   }
-  body {
-    background: url('../images/background.jpg') no-repeat center center fixed;
-    background-size: cover;
-  }
+
   
-  div.row {
-    margin-bottom: 30px;
-  }
-  
+
   a, a:hover, a:active, a:visited, a:focus {
     color: #e91e63;
     text-decoration: none;
@@ -114,12 +100,7 @@ footer {
       word-break: break-all;
   }
   
-  #wallet-image {
-    width: 200px;
-    height: auto;
-    margin-bottom: 30px;
-  }
-  
+
   #actions button {
     margin-bottom: 5px;
   }

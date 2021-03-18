@@ -89,6 +89,7 @@ contract Contrat {
       dateSig = block.timestamp;
     }
     if (hasSigned[wifeAddress] && hasSigned[husbandAddress]){
+      signed = true;
       emit ContractSigned(block.timestamp);
     }
   }

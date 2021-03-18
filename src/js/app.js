@@ -1,14 +1,12 @@
 App = {
-  husbandAddress: "0xad3747FC1bFb60a8BFb1772Cb5c7126B9F8a58A6",
+
+  husbandAddress: "0xad3747FC1bFb60a8BFb1772Cb5c7126B9F8a58A6", //
   wifeAddress: "0xC95b19543c59fe8200Cc2D5cC0887933898943BF",
-
-
-
   web3Provider: undefined,
   contracts: {},
   userAccount: undefined,
   events: [],
-  
+
 
   init: () => {
     return App.initWeb3();
@@ -20,17 +18,15 @@ App = {
       ErrorModal(undefined, "Installez metamask svp -> metamask.io");
       return
     }
-    // Web3
     if (ethereum !== undefined) {
       App.web3Provider = ethereum;
     } else {
       App.web3Provider = web3.currentProvider;
     }
     web3 = new Web3(App.web3Provider);
-    App.userAccount = await web3.eth.accounts[0];
-
+    App.userAccount = await web3.eth.accounts[0];    
     if (App.userAccount === undefined && ethereum !== undefined) {
-      await ethereum.enable();
+      await ethereum.enable();      
     }
 
     // Changement wallets
@@ -38,10 +34,10 @@ App = {
       const wallet = await web3.eth.accounts[0];
       if (wallet !== App.userAccount) {
         App.userAccount = wallet;
+        //console.log("Wallet : " + App.userAccount);
         if (App.updateUi !== undefined) App.updateUi();
       }
     }, 100);
-
     return App.initContract();
   },
 
@@ -49,23 +45,18 @@ App = {
   initContract: () => {
     $.getJSON('./Contrat.json', (data) => {
       const Contrat = data;
-
       // truffle-contract
       App.contracts.Contract = TruffleContract(Contrat);
       // Ajouter premier contrat
       App.contracts.Contract.setProvider(App.web3Provider);
-
       App.initListeners();
     })
     , 
     $.getJSON('./Precontrat.json', (data2) => {
-
       Precontrat = data2;
       App.contracts.Precontract = TruffleContract(Precontrat);
       App.contracts.Precontract.setProvider(App.web3Provider);
       App.initListeners();
-
-    
   })},
 
   initListeners: () => {
@@ -74,7 +65,6 @@ App = {
 
   initPolling: () => {
     App.updateUi();
-
     const frontendUpdateInterval = setInterval(() => {
       if (App.updateUi !== undefined) {
         App.updateUi();
@@ -94,27 +84,26 @@ App = {
         $("#contract-balance").text(Number(balance).toFixed(4));
       });
       
-      // Mise a jour informations network
+      // Mise a jour config
       $.get('config.json', function(data) {
-        configjson = JSON.parse(data, 'utf8'); 
-        $("#precontract-husbandAddress").val(configjson.husbandAddress);
-        $("#precontract-wifeAddress").val(configjson.wifeAddress);
-        $("#precontract-typeDivorce").prop('checked', configjson.divUnilateral);
-        $("#precontract-mtSingature").prop('checked', configjson.mtSingature);
+        datap = JSON.parse(data, 'utf8'); 
+        $("#precontract-husbandAddress").val(datap.husbandAddress);
+        $("#precontract-wifeAddress").val(datap.wifeAddress);
+        $("#precontract-typeDivorce").prop('checked', datap.divUnilateral);
+        $("#precontract-mtSingature").prop('checked', datap.valSignature);
       }, 'text')
-  
+
         contract.dateDep().then((dateDep) => {
           if(dateDep == 0){
             $("#etatContrat").text('Precontrat pas encore deployé');
           }else{
-            $("#etatContrat").text("Date deploiement : " + new Date(dateDep*1000));
+            $("#etatContrat").text(new Date(dateDep*1000));
           }
         });
-     
+
       // Mise a jour adresses et contrat
       web3.eth.getBalance(App.userAccount, (error, balanceWei) => {
         const balance = web3.fromWei(web3.toDecimal(balanceWei));
-
         //$("#wallet-image").attr("src", addressToImageUrl(App.userAccount));
         $("#wallet-type").text(TypeAdresse(App.userAccount));
         $("#wallet-address").text(App.userAccount);
@@ -149,26 +138,19 @@ App = {
         // Mise a jour divorce
         contract.divorced().then((divorced) => {
           $("#contract-status-divorced").prop('checked', divorced);
-
-          // Mise a jour Checkboxes
+          // Mise a jour buttons + checkboxes
           if (divorced) {
             $(".signed-action-button").attr("disabled", true);
-            $("#action-written-contract-upload").attr("disabled", true);
-            $("#action-written-contract-download").attr("disabled", false);
             $("#action-sign-contract").attr("disabled", true);
           } else if (!signed) {
             $(".signed-action-button").attr("disabled", true);
             $("#action-sign-contract").attr("disabled", false);
-
           } else {
             $(".signed-action-button").attr("disabled", false);
-            $("#action-written-contract-upload").attr("disabled", true);
-            $("#action-written-contract-download").attr("disabled", false);
             $("#action-sign-contract").attr("disabled", true);
           }
         });
       });
-      //console.log("Date Signature :"+contract.dateSig);
       contract.dateDep().then((dateSig) => {
         $("#date-dep").text(dateDep);
         return dateDep;
@@ -177,6 +159,7 @@ App = {
         $("#date-sig").text(dateSig);
         return dateSig;
       });
+
       const fromBlockNumber = 0;
       contract.allEvents({ fromBlock: fromBlockNumber, toBlock: "latest" }).get((error, result) => {
         const newEvents = [];
@@ -191,8 +174,8 @@ App = {
           _.each(App.events, async (event) => {
             let eventListItem = "<div class=\"alert alert-__TYPE__ text-truncate\" role=\"alert\">__TEXT__<span class=\"float-right time-ago\">__TIME__</span></div>";
             const address = event.args["wallet"];
-            const amount = event.args["amount"];
-            const value = web3.fromWei(web3.toBigNumber(amount).toNumber());
+            const montant = event.args["amount"];
+            const value = web3.fromWei(web3.toBigNumber(montant).toNumber());
             const timestamp  = web3.toBigNumber(event.args["timestamp"]).toNumber() * 1000;
 
             //eventListItem = updateEventListItem(eventListItem, "", timestamp, TypeAdresse(address, false) + " a proposé un contrat" + ipfsHash);
@@ -201,19 +184,19 @@ App = {
               eventListItem = updateEventListItem(eventListItem, "warning", timestamp, TypeAdresse(address, false) + " a signé un contrat");
               break;
               case "ContractSigned":
-              eventListItem = updateEventListItem(eventListItem, "success", timestamp, "Contrat à été signé par les deux mari!");
+              eventListItem = updateEventListItem(eventListItem, "success", timestamp, "Contrat à été signé");
               break;
               case "DivorceApproved":
-              eventListItem = updateEventListItem(eventListItem, "warning", timestamp, TypeAdresse(address, false) + " a demandé divorce");
+              eventListItem = updateEventListItem(eventListItem, "warning", timestamp, TypeAdresse(address, false) + " à demandé divorce");
               break;
               case "Divorced":
-              eventListItem = updateEventListItem(eventListItem, "danger", timestamp, "Les deux mari ont accepté de divorcer! (dommage)");
+              eventListItem = updateEventListItem(eventListItem, "danger", timestamp, "Divorce");
               break;
               case "DivorcedUni":
               eventListItem = updateEventListItem(eventListItem, "danger", timestamp, "Divorce Unilateral");
               break;
               case "FundsSent":
-              eventListItem = updateEventListItem(eventListItem, "danger", timestamp, value + " ETH ajoute " + TypeAdresse(address, true) + " envoyé!");
+              eventListItem = updateEventListItem(eventListItem, "danger", timestamp, value + " ETH envoyé à " + TypeAdresse(address, true));
               break;
               case "FundsReceived":
               eventListItem = updateEventListItem(eventListItem, "success", timestamp, value + " ETH envoye par " + TypeAdresse(address, true) + " recu!");
@@ -227,51 +210,51 @@ App = {
   }
 };
 
+// Interface Smart contract 
 function signContract() {
-  let valMtSingature = false;
+  let valSignature = false;
 
   App.contracts.Precontract.deployed().then((Precontrat) => {
-    Precontrat.valMtSingature().then((valMtSingature) => {
-      valMtSingature = valMtSingature; 
-      console.log("send money while signing: " + valMtSingature);
-  if(valMtSingature){
-    $.get('config.json', function(data) {
-      configjson = JSON.parse(data, 'utf8'); 
-    }, 'text')
-    App.contracts.Contract.deployed().then((contract) => {
-      console.log("Transfer -> " + 5 + " ETH");
-      // a revoir gas
-      return web3.eth.sendTransaction({ from: App.userAccount, to: contract.address, value: web3.toWei(configjson.valMtSingature), gas: "50000" }, (error, hash) => {
-        //console.log(hash);
+    Precontrat.valSignature().then((valSignature) => {
+      valSignature = valSignature; 
+      console.log("Action: Transaction initial -> " + valSignature);
+      if(valSignature){
+        $.get('config.json', function(data) {
+        datap = JSON.parse(data, 'utf8'); 
+        console.log(datap.husbandAddress)
+      }, 'text')
+      App.contracts.Contract.deployed().then((contract) => {
+        console.log("Action: Transfer -> " + datap.valMtSingature + " ETH");
+        return web3.eth.sendTransaction({ from: App.userAccount, to: contract.address, value: web3.toWei(datap.valMtSingature), gas: "50000" }, (error, hash) => {
         if (error) {
           console.log(error);
           ErrorModal(error, "Depöt echoué");
         }
+      $("#action-sign-contract").attr("disabled", true);
       });
     });}
     });
-  });
+    });
 
   App.contracts.Contract.deployed().then((contract) => {
+    console.log("Action: Signer contract");
     return contract.signContract({ from: App.userAccount });
-  }).then((result) => {
+    }).then((result) => {
     //console.log(result);
-    $('#signContractModal').modal('hide');
-  }).catch((error) => {
-    //console.log(error);
-    $('#signContractModal').modal('hide');
-    ErrorModal(error, "Signature echouée");
-  });
-      }
+      $('#signContractModal').modal('hide');
+    }).catch((error) => {
+      //console.log(error);
+      $('#signContractModal').modal('hide');
+      ErrorModal(error, "Signature echouée");
+    });  
+}
 
 
 function payIn() {
-  const amount = $("#payInModal-amount").val();
-
+  const montant = $("#payInModal-amount").val();
   App.contracts.Contract.deployed().then((contract) => {
-    console.log("Transfer -> " + amount + " ETH");
-    // a revoir gas
-    return web3.eth.sendTransaction({ from: App.userAccount, to: contract.address, value: web3.toWei(amount), gas: "50000" }, (error, hash) => {
+    console.log("Action: Transfer -> " + montant + " ETH");
+    return web3.eth.sendTransaction({ from: App.userAccount, to: contract.address, value: web3.toWei(montant), gas: "50000" }, (error, hash) => {
       //console.log(hash);
       $('#payInModal').modal('hide');
       $("#payInModal-amount").val("");
@@ -285,10 +268,10 @@ function payIn() {
 
 function pay() {
   const address = $("#payModal-address").val();
-  const amount = $("#payModal-amount").val();
+  const montant = $("#payModal-amount").val();
   App.contracts.Contract.deployed().then((contract) => {
-    console.log("Action: Payer -> " + address + ", " + amount + " ETH");
-    return contract.pay(address, web3.toWei(amount), { from: App.userAccount });
+    console.log("Action: Payer -> " + address + ", " + montant + " ETH");
+    return contract.pay(address, web3.toWei(montant), { from: App.userAccount });
   }).then((result) => {
     console.log(result);
     $('#payModal').modal('hide');
@@ -305,22 +288,19 @@ function pay() {
 
 // Divorce
 function divorce() {
-
-  let Unilateral = false;
+  let divUnilateral = false;
   if (App.contracts.Precontract === undefined) return;
-  
   App.contracts.Precontract.deployed().then((Precontrat) => {
     Precontrat.divUnilateral().then((divUnilateral) => {
-      Unilateral = divUnilateral; 
-      console.log("Divorce Unilateral : " + divUnilateral);
-      if(Unilateral){
-        console.log("---> Divorce Unilateral");
+      divUnilateral = divUnilateral; 
+      if(divUnilateral){
+        console.log("Action: Divorce Unilateral ->" + divUnilateral);
         App.contracts.Contract.deployed().then((contract) => {
           return contract.UnilateralDivorce({ from: App.userAccount });
         })
 
       }else{
-        console.log("---> Divorce (necessite signature deux epoux");
+        console.log("Action: Divorce (necessite multisig)");
         App.contracts.Contract.deployed().then((contract) => {
          return contract.divorce({ from: App.userAccount });
         }).then((result) => {
@@ -336,11 +316,6 @@ function divorce() {
 )}
       
 
-
-
-  
-  
-// Main
 $(document).ready(() => {
   App.init();
 });
@@ -348,7 +323,7 @@ $(document).ready(() => {
 
 // Helpers
 function ErrorModal(error, message) {
-  if (!_.isUndefined(error.message) && error.message.includes("Tx annulé")) return;
+  if (!_.isUndefined(error.message) && error.message.includes("Transaction annulée")) return;
   $('#errorModalMessage').text(message);
   $('#errorModal').modal('show');
 }
