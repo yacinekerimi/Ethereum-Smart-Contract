@@ -1,7 +1,7 @@
 {
-"husbandAddress": "0xad3747FC1bFb60a8BFb1772Cb5c7126B9F8a58A6",
-"wifeAddress": "0xC95b19543c59fe8200Cc2D5cC0887933898943BF",
-"divUnilateral": false,
+"husbandAddress": "0x6f768E4a54E69Ba8c95B9bc457e27e37359B4F85",
+"wifeAddress": "0x9446ac5D12235fB3C7E77B78A1031712ed6DA736",
+"divUnilateral": true,
 "valSignature": true,
 "valMtSingature": "0.5"
 }

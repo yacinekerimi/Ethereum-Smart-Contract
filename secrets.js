@@ -1,5 +1,5 @@
 module.exports = {
     privateKeysPrivateTestnet: [
-      "84a4c5ae4f14331795716b2294081b2556a4350b565982de2698a1a82883e9e8"
+      "cae5e8ffd6112ffaafd740d3ebced73c1670ce806977680cd945d2c52a9fc857"
     ]
   }
